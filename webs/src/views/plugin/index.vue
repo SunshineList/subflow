@@ -6,8 +6,8 @@
           <div class="left">
             <el-input
               v-model="searchQuery"
+              class="toolbar-search-input"
               :placeholder="$t('plugin.search')"
-              style="width: 200px; margin-left: 15px"
               clearable
               @input="handleSearch"
             >
@@ -16,7 +16,7 @@
               </template>
             </el-input>
           </div>
-          <div>
+          <div class="header-right">
             <el-button type="primary" @click="reloadPlugins" :loading="reloading">
               <el-icon><refresh /></el-icon>
               {{ $t('plugin.reload') }}
@@ -44,32 +44,34 @@
         </el-table-column>
         <el-table-column :label="$t('plugin.actions')" width="220" fixed="right">
           <template #default="scope">
-            <el-button
-              v-if="!scope.row.enabled"
-              type="success"
-              size="small"
-              @click="handleEnable(scope.row)"
-              :loading="actionLoading === scope.row.name + '_enable'"
-            >
-              {{ $t('plugin.enable') }}
-            </el-button>
-            <el-button
-              v-else
-              type="warning"
-              size="small"
-              @click="handleDisable(scope.row)"
-              :loading="actionLoading === scope.row.name + '_disable'"
-            >
-              {{ $t('plugin.disable') }}
-            </el-button>
-            <el-button
-              type="primary"
-              size="small"
-              @click="openConfigDialog(scope.row)"
-              :loading="actionLoading === scope.row.name + '_config'"
-            >
-              {{ $t('plugin.config') }}
-            </el-button>
+            <div class="sl-table-actions">
+              <el-button
+                v-if="!scope.row.enabled"
+                type="success"
+                size="small"
+                @click="handleEnable(scope.row)"
+                :loading="actionLoading === scope.row.name + '_enable'"
+              >
+                {{ $t('plugin.enable') }}
+              </el-button>
+              <el-button
+                v-else
+                type="warning"
+                size="small"
+                @click="handleDisable(scope.row)"
+                :loading="actionLoading === scope.row.name + '_disable'"
+              >
+                {{ $t('plugin.disable') }}
+              </el-button>
+              <el-button
+                type="primary"
+                size="small"
+                @click="openConfigDialog(scope.row)"
+                :loading="actionLoading === scope.row.name + '_config'"
+              >
+                {{ $t('plugin.config') }}
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -355,28 +357,6 @@ const handleSaveConfig = async () => {
 </script>
 
 <style scoped>
-.app-container {
-  padding: 16px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--sl-text);
-}
-
 .plugin-config .el-descriptions {
   margin-bottom: 16px;
 }

@@ -49,40 +49,75 @@ function resetPassword(row: { [key: string]: any }) {
 </script>
 
 <template>
-  <el-card style="margin: 10px;text-align: center;">
-    <el-row :gutter="20">
-      <el-col :span="18">
-        <h2>{{$t('userset.title')}}</h2>
-      </el-col>
-      <el-col :span="18" v-if="userinfo">
-        <el-badge :value="userinfo.username" class="item">
-          <el-image :src="userinfo.avatar" />
-  </el-badge>
+  <div class="page-container userset-page">
+    <el-card class="userset-card" shadow="never">
+      <el-row :gutter="16" justify="center">
+        <el-col :xs="22" :sm="18" :md="14" :lg="12">
+          <h2 class="userset-title">{{ $t('userset.title') }}</h2>
         </el-col>
-
-      <el-col :span="18">
-        <el-input
-    v-model="username"
-    :placeholder="$t('userset.newUsername')"
-  />
-      </el-col>
-      <el-col :span="18">
-        <el-input
-        type="password"
-    v-model="password"
-    :placeholder="$t('userset.newPassword')"
-  />
-      </el-col>
-      <el-col :span="18">
-        <el-button type="primary" @click="resetPassword">修改</el-button>
+        <el-col :xs="22" :sm="18" :md="14" :lg="12" v-if="userinfo" class="userset-avatar-wrap">
+          <el-badge :value="userinfo.username" class="item">
+            <el-image :src="userinfo.avatar" class="userset-avatar" />
+          </el-badge>
         </el-col>
-      </el-row> 
-  </el-card>
+        <el-col :xs="22" :sm="18" :md="14" :lg="12">
+          <el-input
+            v-model="username"
+            :placeholder="$t('userset.newUsername')"
+            size="large"
+            clearable
+          />
+        </el-col>
+        <el-col :xs="22" :sm="18" :md="14" :lg="12">
+          <el-input
+            v-model="password"
+            type="password"
+            :placeholder="$t('userset.newPassword')"
+            size="large"
+            show-password
+            clearable
+          />
+        </el-col>
+        <el-col :xs="22" :sm="18" :md="14" :lg="12" class="userset-actions">
+          <el-button type="primary" size="large" @click="resetPassword">修改</el-button>
+        </el-col>
+      </el-row>
+    </el-card>
+  </div>
 </template>
 
-
 <style scoped>
+.userset-page {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.userset-card {
+  text-align: center;
+}
+
+.userset-title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--sl-text);
+}
+
+.userset-avatar-wrap {
+  margin-bottom: 8px;
+}
+
+.userset-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+}
+
+.userset-actions {
+  margin-top: 8px;
+}
+
 .el-col {
-  margin-bottom: 10px
+  margin-bottom: 12px;
 }
 </style>

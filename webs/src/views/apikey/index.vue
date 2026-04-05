@@ -1,5 +1,5 @@
-<template>  <div class="app-container">
-
+<template>
+  <div class="app-container">
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
@@ -7,8 +7,8 @@
             <span class="title">{{ $t('apikey.title') }}</span>
             <el-input
               v-model="searchQuery"
+              class="toolbar-search-input"
               :placeholder="$t('apikey.search')"
-              style="width: 200px; margin-left: 15px"
               clearable
               @input="handleSearch"
             >
@@ -17,7 +17,9 @@
               </template>
             </el-input>
           </div>
-          <el-button type="primary" @click="openCreateDialog">{{ $t('apikey.createNew') }}</el-button>
+          <div class="header-right">
+            <el-button type="primary" @click="openCreateDialog">{{ $t('apikey.createNew') }}</el-button>
+          </div>
         </div>
       </template>
 
@@ -33,7 +35,8 @@
           <template #default="scope">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
-        </el-table-column>        <el-table-column prop="expiredAt" :label="$t('apikey.expiredAt')" width="180" sortable>
+        </el-table-column>
+        <el-table-column prop="expiredAt" :label="$t('apikey.expiredAt')" width="180" sortable>
           <template #default="scope">
             <el-tag 
               :type="getExpirationTagType(scope.row)" 
@@ -52,8 +55,10 @@
         </el-table-column>
       </el-table>
       
-      <el-empty v-if="filteredApiKeys.length === 0 && !loading" :description="$t('apikey.noData')"></el-empty>
-    </el-card>    <!-- 创建API Key对话框 -->
+      <el-empty v-if="filteredApiKeys.length === 0 && !loading" :description="$t('apikey.noData')" />
+    </el-card>
+
+    <!-- 创建API Key对话框 -->
     <el-dialog
       v-model="createDialogVisible"
       :title="$t('apikey.createNew')"
@@ -70,11 +75,13 @@
             show-word-limit
             clearable
           />
-        </el-form-item>        <el-form-item :label="$t('apikey.expiration')">
+        </el-form-item>
+        <el-form-item :label="$t('apikey.expiration')">
           <el-radio-group v-model="expirationOption">
             <el-radio value="never">{{ $t('apikey.neverExpire') }}</el-radio>
             <el-radio value="custom">{{ $t('apikey.customExpire') }}</el-radio>
-          </el-radio-group><el-date-picker
+          </el-radio-group>
+          <el-date-picker
             v-if="expirationOption === 'custom'"
             v-model="newApiKey.expiredAt"
             type="datetime"
@@ -88,10 +95,10 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="createDialogVisible = false" :disabled="creating">
-            {{ $t('cancel') || '取消' }}
+            {{ $t('cancel') }}
           </el-button>
           <el-button type="primary" @click="handleCreateAPIKey" :loading="creating">
-            {{ $t('confirm') || '确定' }}
+            {{ $t('confirm') }}
           </el-button>
         </span>
       </template>
@@ -384,37 +391,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.app-container {
-  padding: 16px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.title {
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--sl-text);
-}
-
 .api-key-display {
   text-align: center;
   margin: 20px 0;
-}
 
-.api-key-display p {
-  color: var(--sl-danger);
-  margin-bottom: 15px;
-  font-weight: bold;
+  p {
+    color: var(--sl-danger);
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
 }
 
 .mt-4 {

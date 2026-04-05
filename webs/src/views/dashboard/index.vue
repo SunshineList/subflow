@@ -44,7 +44,7 @@
         </div>
       </el-col>
       <el-col :xs="12" :sm="6">
-        <div class="stat-card stat-info-card">
+        <div class="stat-card stat-info-card stat-card--static">
           <div class="stat-icon">
             <el-icon :size="24"><InfoFilled /></el-icon>
           </div>
@@ -121,7 +121,7 @@
             <div class="card-header-flex">
               <span class="card-title">定时订阅任务</span>
               <el-tag :type="schedulerList.length > 0 ? 'success' : 'info'" size="small" effect="light">
-                {{ schedulerList.filter(s => s.Enabled).length }} 个运行中
+                {{ schedulerList.filter((s) => s.Enabled).length }} 个运行中
               </el-tag>
             </div>
           </template>
@@ -144,7 +144,7 @@
             </div>
           </div>
           <el-empty v-else description="暂无定时任务" :image-size="60">
-            <router-link to="/subcription/nodes">
+            <router-link to="/subcription/nodes?scheduler=1">
               <el-button type="primary" size="small">前往添加</el-button>
             </router-link>
           </el-empty>
@@ -200,9 +200,13 @@
               <el-icon :size="20" color="#F59E0B"><Document /></el-icon>
               <span>管理模板</span>
             </router-link>
-            <router-link to="/apikey" class="action-item">
+            <router-link to="/apikey/index" class="action-item">
               <el-icon :size="20" color="#6366F1"><Key /></el-icon>
               <span>API 密钥</span>
+            </router-link>
+            <router-link to="/subcription/nodes?scheduler=1" class="action-item">
+              <el-icon :size="20" color="#F59E0B"><Timer /></el-icon>
+              <span>定时订阅任务</span>
             </router-link>
             <router-link to="/plugin" class="action-item">
               <el-icon :size="20" color="#EC4899"><SetUp /></el-icon>
@@ -294,9 +298,18 @@ interface SubLog {
   SubName: string;
 }
 
+interface SchedulerBrief {
+  ID: number;
+  Name: string;
+  CronExpr: string;
+  SuccessCount?: number;
+  LastRunTime?: string;
+  Enabled: boolean;
+}
+
 const subsList = ref<any[]>([]);
 const nodesList = ref<any[]>([]);
-const schedulerList = ref<any[]>([]);
+const schedulerList = ref<SchedulerBrief[]>([]);
 const allLogs = ref<SubLog[]>([]);
 
 const protocolColors: Record<string, string> = {
@@ -404,7 +417,9 @@ const fetchAll = async () => {
       allLogs.value = logs;
     }
     if (nodesRes.status === 'fulfilled') nodesList.value = nodesRes.value.data || [];
-    if (schedulerRes.status === 'fulfilled') schedulerList.value = schedulerRes.value.data || [];
+    if (schedulerRes.status === 'fulfilled') {
+      schedulerList.value = (schedulerRes.value.data || []) as SchedulerBrief[];
+    }
   } catch (e) {
     /* ignore */
   } finally {
@@ -420,7 +435,7 @@ const refreshAll = () => {
 };
 
 const handleGoScheduler = () => {
-  router.push('/subcription/nodes');
+  router.push({ path: '/subcription/nodes', query: { scheduler: '1' } });
 };
 
 onMounted(() => {
@@ -482,13 +497,14 @@ const greetings = computed(() => {
   background: var(--sl-bg-card);
   border: 1px solid var(--sl-border);
   box-shadow: var(--sl-shadow-sm);
-  transition: all 200ms ease-out;
-  cursor: default;
+  transition: all 250ms ease-out;
+  cursor: pointer;
   text-decoration: none;
 
   &:hover {
     box-shadow: var(--sl-shadow-md);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    border-color: var(--sl-primary-lighter);
   }
 }
 
@@ -506,6 +522,16 @@ const greetings = computed(() => {
 .stat-success .stat-icon { background: rgba(16, 185, 129, 0.1); color: #10B981; }
 .stat-warning .stat-icon { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
 .stat-info-card .stat-icon { background: rgba(99, 102, 241, 0.1); color: #6366F1; }
+
+.stat-card--static {
+  cursor: default;
+
+  &:hover {
+    transform: none;
+    box-shadow: var(--sl-shadow-sm);
+    border-color: var(--sl-border);
+  }
+}
 
 .stat-detail {
   display: flex;
@@ -624,6 +650,7 @@ const greetings = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   padding: 10px 12px;
   border-radius: var(--sl-radius);
   background: var(--sl-border-light);
@@ -774,6 +801,7 @@ const greetings = computed(() => {
   padding: 14px 16px;
   border-radius: var(--sl-radius);
   background: var(--sl-border-light);
+  border: 1px solid transparent;
   transition: all 200ms ease-out;
   cursor: pointer;
   text-decoration: none;
@@ -783,8 +811,10 @@ const greetings = computed(() => {
 
   &:hover {
     background: rgba(37, 99, 235, 0.06);
+    border-color: rgba(37, 99, 235, 0.15);
     color: var(--sl-primary);
-    transform: translateX(4px);
+    transform: translateY(-1px);
+    box-shadow: var(--sl-shadow-sm);
   }
 }
 
@@ -834,6 +864,57 @@ const greetings = computed(() => {
 
   &:hover {
     color: var(--sl-primary-light);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 12px 14px;
+  }
+
+  .greeting {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .stat-card {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .card-header-flex {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .scheduler-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .scheduler-right {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .log-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .log-right {
+    align-items: flex-start;
+    width: 100%;
   }
 }
 </style>

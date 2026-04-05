@@ -63,7 +63,7 @@ func GetMenus(c *gin.Context) {
 			Meta: Meta{
 				Title:  "apikey",
 				Icon:   "key",
-				Hidden: true,
+				Hidden: false,
 				Roles:  []string{"ADMIN"},
 			},
 			Children: []Child{
@@ -74,7 +74,7 @@ func GetMenus(c *gin.Context) {
 					Meta: Meta{
 						Title:     "apikey",
 						Icon:      "key",
-						Hidden:    true,
+						Hidden:    false,
 						Roles:     []string{"ADMIN"},
 						KeepAlive: true,
 					},

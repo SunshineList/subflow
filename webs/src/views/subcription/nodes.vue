@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { ref, onMounted, nextTick, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { Search, Refresh, Plus, Download, Delete, Edit, CopyDocument } from '@element-plus/icons-vue'
 import { getNodes, AddNodes, DelNode, UpdateNode } from "@/api/subcription/node"
 import { getSubSchedulers, addSubScheduler, updateSubScheduler, deleteSubScheduler, type SubScheduler, type SubSchedulerRequest } from "@/api/subcription/scheduler"
@@ -12,6 +13,9 @@ interface Node {
   DialerProxyName: string;
   CreateDate: string;
 }
+
+const route = useRoute()
+const router = useRouter()
 
 const tableData = ref<Node[]>([])
 const loading = ref(false)
@@ -215,14 +219,13 @@ const copyUrl = async (url: string) => {
 };
 const copyInfo = (row: any) => { copyUrl(row.Link) }
 
-// 订阅调度相关
 const getSubSchedulerList = async () => {
   try {
     const response = await getSubSchedulers()
     if (response) {
       subSchedulerData.value = response.data || []
     }
-  } catch (error) {
+  } catch {
     ElMessage.error('获取订阅列表失败')
   }
 }
@@ -231,6 +234,18 @@ const handleImportSubscription = () => {
   subSchedulerDialogVisible.value = true
   getSubSchedulerList()
 }
+
+const SCHEDULER_QUERY_ON = new Set(['1', 'true'])
+function openSchedulerIfQuery() {
+  if (route.path !== '/subcription/nodes') return
+  const raw = route.query.scheduler
+  const v = Array.isArray(raw) ? raw[0] : raw
+  if (!SCHEDULER_QUERY_ON.has(String(v ?? ''))) return
+  handleImportSubscription()
+  router.replace({ path: '/subcription/nodes' })
+}
+
+watch(() => route.fullPath, openSchedulerIfQuery, { immediate: true })
 
 const handleAddSubScheduler = () => {
   subSchedulerFormTitle.value = '添加订阅'
@@ -373,7 +388,7 @@ const submitSubSchedulerForm = async () => {
         await getSubSchedulerList()
       }
     }
-  } catch (error) {
+  } catch {
     ElMessage.error('操作失败')
   }
 }
@@ -430,7 +445,7 @@ const formatDateTime = (dateTimeString: string) => {
         <div class="card-header">
           <div class="header-left">
             <span class="card-title">节点管理</span>
-            <el-input v-model="searchQuery" placeholder="搜索节点..." style="width: 220px" clearable
+            <el-input v-model="searchQuery" placeholder="搜索节点..." class="header-search-input" clearable
               @input="handleSearch" size="default">
               <template #prefix>
                 <el-icon><Search /></el-icon>
@@ -582,47 +597,40 @@ const formatDateTime = (dateTimeString: string) => {
 </template>
 
 <style scoped>
-.page-container {
-  padding: 16px;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.header-search-input {
+  width: 220px;
+  max-width: 100%;
 }
 
 .header-right {
   display: flex;
   gap: 8px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--sl-text);
-}
-
-.table-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
   flex-wrap: wrap;
-  gap: 12px;
 }
 
-.batch-actions {
-  display: flex;
-  gap: 8px;
+@media (max-width: 768px) {
+  .header-left {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .header-search-input {
+    width: 100%;
+  }
+
+  .header-right .el-button {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+  }
 }
 
 .scheduler-header {
@@ -656,13 +664,13 @@ const formatDateTime = (dateTimeString: string) => {
 .cron-examples {
   margin-top: 4px;
   line-height: 1.8;
-}
 
-.cron-examples code {
-  background: var(--sl-border-light);
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 12px;
+  code {
+    background: var(--sl-border-light);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
 }
 
 .mr-1 {

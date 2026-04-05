@@ -70,13 +70,10 @@ async function gettemps() {
   templist.value = data
 }
 
-onMounted(() => {
+onMounted(async () => {
   getsubs()
   gettemps()
-})
-
-onMounted(async () => {
-  const { data } = await getNodes();
+  const { data } = await getNodes()
   NodesList.value = data
 })
 
@@ -491,10 +488,14 @@ const handleCancelSort = () => {
     <el-card shadow="never">
       <template #header>
         <div class="card-header">
-          <span class="card-title">订阅管理</span>
-          <el-button type="primary" @click="handleAddSub">
-            <el-icon class="mr-1"><Plus /></el-icon>添加订阅
-          </el-button>
+          <div class="header-left">
+            <span class="card-title">订阅管理</span>
+          </div>
+          <div class="header-right">
+            <el-button type="primary" @click="handleAddSub">
+              <el-icon class="mr-1"><Plus /></el-icon>添加订阅
+            </el-button>
+          </div>
         </div>
       </template>
 
@@ -533,7 +534,7 @@ const handleCancelSort = () => {
         <el-table-column prop="CreateDate" label="创建时间" sortable width="180" />
         <el-table-column label="操作" width="260" fixed="right">
           <template #default="scope">
-            <div v-if="scope.row.Nodes" class="action-btns">
+            <div v-if="scope.row.Nodes" class="sl-table-actions">
               <el-button link type="primary" size="small" @click="handleIplogs(scope.row)">
                 <el-icon><View /></el-icon>记录
               </el-button>
@@ -583,22 +584,6 @@ const handleCancelSort = () => {
 </template>
 
 <style scoped>
-.page-container {
-  padding: 16px;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--sl-text);
-}
-
 .template-selector {
   display: flex;
   flex-direction: column;
@@ -610,30 +595,11 @@ const handleCancelSort = () => {
   width: 100%;
 }
 
-.action-btns {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.table-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.batch-actions {
-  display: flex;
-  gap: 8px;
-}
-
 .sorting-badge {
   margin-left: 6px;
   font-size: 11px;
   color: var(--sl-accent);
+  font-weight: 600;
   animation: pulse 1.5s infinite;
 }
 
@@ -643,10 +609,10 @@ const handleCancelSort = () => {
 }
 
 .node-draggable {
-  padding: 8px 12px;
+  padding: 6px 10px;
   margin: 2px 0;
   border: 1px dashed var(--sl-border);
-  border-radius: var(--sl-radius);
+  border-radius: 6px;
   background: var(--sl-border-light);
   cursor: move;
   transition: all 200ms ease-out;
@@ -669,7 +635,6 @@ const handleCancelSort = () => {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
-/* Client list */
 .client-list {
   display: flex;
   flex-direction: column;
@@ -685,11 +650,12 @@ const handleCancelSort = () => {
   border: 1px solid var(--sl-border);
   cursor: pointer;
   transition: all 200ms ease-out;
-}
 
-.client-item:hover {
-  border-color: var(--sl-primary);
-  background: rgba(37, 99, 235, 0.04);
+  &:hover {
+    border-color: var(--sl-primary);
+    background: rgba(37, 99, 235, 0.04);
+    box-shadow: var(--sl-shadow-sm);
+  }
 }
 
 .client-left {
@@ -704,7 +670,6 @@ const handleCancelSort = () => {
   color: var(--sl-text);
 }
 
-/* QR Code dialog */
 .qr-content {
   display: flex;
   flex-direction: column;

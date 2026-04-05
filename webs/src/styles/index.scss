@@ -4,6 +4,10 @@
   padding: 16px;
 }
 
+.page-container {
+  padding: 16px;
+}
+
 .search-container {
   padding: 18px 0 0 10px;
   margin-bottom: 12px;
@@ -28,60 +32,271 @@
   }
 }
 
-/* Element Plus 全局覆盖 */
+/* ========================================
+   Element Plus Global Overrides
+   SaaS Dashboard Design System
+   ======================================== */
+
+/* --- Cards --- */
 .el-card {
   border-radius: var(--sl-radius-lg) !important;
   border: 1px solid var(--sl-border) !important;
   box-shadow: var(--sl-shadow-sm) !important;
-  transition: box-shadow var(--sl-transition), transform var(--sl-transition);
+  transition: box-shadow var(--sl-transition);
+  background: var(--sl-bg-card) !important;
 
-  &:hover {
-    box-shadow: var(--sl-shadow) !important;
+  .el-card__header {
+    padding: 16px 20px !important;
+    border-bottom: 1px solid var(--sl-border);
   }
 }
 
-.el-button {
-  border-radius: var(--sl-radius) !important;
-  transition: all var(--sl-transition) !important;
-  font-weight: 500 !important;
+/* --- Card header layout utility --- */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .card-title,
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--sl-text);
+    letter-spacing: -0.01em;
+  }
+
+  .left,
+  .header-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    min-width: 0;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+  }
 }
 
-.el-button--primary {
-  background: var(--sl-primary) !important;
+/* 列表页顶栏搜索框默认宽度（移动端在下方 media 中拉满） */
+.toolbar-search-input {
+  width: 200px;
+  max-width: 100%;
+}
+
+/* 表格单元格内多按钮横向排列并可换行 */
+.sl-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  align-items: center;
+}
+
+.sl-table-actions .el-button {
+  margin-left: 0 !important;
+}
+
+/* --- Buttons: Base --- */
+.el-button {
+  border-radius: var(--sl-radius) !important;
+  transition: all 200ms ease-out !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+}
+
+/* --- Buttons: Primary solid --- */
+.el-button--primary:not(.is-link):not(.is-text) {
+  background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-primary-light) 100%) !important;
   border-color: var(--sl-primary) !important;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 
   &:hover,
   &:focus {
-    background: var(--sl-primary-light) !important;
+    background: linear-gradient(135deg, var(--sl-primary-light) 0%, var(--sl-primary-lighter) 100%) !important;
     border-color: var(--sl-primary-light) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
   }
 }
 
+/* --- Buttons: Link/text style → ghost pill buttons --- */
+.el-button.is-link,
+.el-button.is-text {
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  height: auto !important;
+  line-height: 1.4 !important;
+
+  .el-icon {
+    margin-right: 2px;
+  }
+
+  &:hover {
+    transform: none !important;
+  }
+
+  &.el-button--primary {
+    color: var(--sl-primary) !important;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(37, 99, 235, 0.1) !important;
+      color: var(--sl-primary) !important;
+    }
+  }
+
+  &.el-button--success {
+    color: var(--sl-success) !important;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(16, 185, 129, 0.1) !important;
+      color: var(--sl-success) !important;
+    }
+  }
+
+  &.el-button--warning {
+    color: var(--sl-warning) !important;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(245, 158, 11, 0.1) !important;
+      color: var(--sl-warning) !important;
+    }
+  }
+
+  &.el-button--danger {
+    color: var(--sl-danger) !important;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(239, 68, 68, 0.1) !important;
+      color: var(--sl-danger) !important;
+    }
+  }
+
+  &.el-button--info {
+    color: var(--sl-text-secondary) !important;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(100, 116, 139, 0.1) !important;
+      color: var(--sl-text-secondary) !important;
+    }
+  }
+}
+
+/* --- Buttons: Small size --- */
+.el-button--small {
+  font-size: 13px !important;
+  padding: 5px 12px !important;
+  height: 28px !important;
+}
+
+/* --- Buttons: Danger solid --- */
+.el-button--danger:not(.is-link):not(.is-text) {
+  &:hover,
+  &:focus {
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* --- Buttons: Success solid --- */
+.el-button--success:not(.is-link):not(.is-text) {
+  &:hover,
+  &:focus {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* --- Tables --- */
 .el-table {
   border-radius: var(--sl-radius) !important;
+  overflow: hidden;
+
+  &::before {
+    display: none;
+  }
 
   th.el-table__cell {
     background-color: var(--sl-border-light) !important;
     color: var(--sl-text-secondary) !important;
     font-weight: 600 !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--sl-border) !important;
+    padding: 10px 0 !important;
+  }
+
+  td.el-table__cell {
+    padding: 8px 0 !important;
+    border-bottom: 1px solid var(--sl-border-light) !important;
+    font-size: 14px;
   }
 
   .el-table__row {
-    transition: background-color var(--sl-transition);
+    transition: background-color 150ms ease-out;
+
+    &:hover > td.el-table__cell {
+      background-color: rgba(37, 99, 235, 0.03) !important;
+    }
+  }
+
+  .el-table__row--striped .el-table__cell {
+    background-color: var(--sl-border-light) !important;
   }
 }
 
+/* --- Table action button group --- */
+.action-btns {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+/* --- Dialogs --- */
 .el-dialog {
   border-radius: var(--sl-radius-xl) !important;
   overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
 
   .el-dialog__header {
     border-bottom: 1px solid var(--sl-border);
     padding: 16px 20px !important;
     margin-right: 0 !important;
+    background: var(--sl-bg-card);
+
+    .el-dialog__title {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--sl-text);
+    }
   }
 
   .el-dialog__body {
@@ -91,28 +306,248 @@
   .el-dialog__footer {
     border-top: 1px solid var(--sl-border);
     padding: 12px 20px !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
   }
 }
 
+/* --- Tags --- */
 .el-tag {
   border-radius: 6px !important;
   font-weight: 500 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.01em;
+
+  &--primary {
+    &.is-light,
+    &.is-plain {
+      background-color: rgba(37, 99, 235, 0.08) !important;
+      border-color: rgba(37, 99, 235, 0.15) !important;
+      color: var(--sl-primary) !important;
+    }
+  }
+
+  &--success {
+    &.is-light,
+    &.is-plain {
+      background-color: rgba(16, 185, 129, 0.08) !important;
+      border-color: rgba(16, 185, 129, 0.15) !important;
+      color: var(--sl-success) !important;
+    }
+  }
+
+  &--warning {
+    &.is-light,
+    &.is-plain {
+      background-color: rgba(245, 158, 11, 0.08) !important;
+      border-color: rgba(245, 158, 11, 0.15) !important;
+      color: var(--sl-warning) !important;
+    }
+  }
+
+  &--danger {
+    &.is-light,
+    &.is-plain {
+      background-color: rgba(239, 68, 68, 0.08) !important;
+      border-color: rgba(239, 68, 68, 0.15) !important;
+      color: var(--sl-danger) !important;
+    }
+  }
+
+  &--info {
+    &.is-light,
+    &.is-plain {
+      background-color: rgba(100, 116, 139, 0.08) !important;
+      border-color: rgba(100, 116, 139, 0.15) !important;
+      color: var(--sl-text-secondary) !important;
+    }
+  }
 }
 
+/* --- Pagination --- */
 .el-pagination {
-  justify-content: center !important;
   margin-top: 16px !important;
+
+  .el-pager li {
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    min-width: 30px !important;
+
+    &.is-active {
+      background: var(--sl-primary) !important;
+      color: #fff !important;
+    }
+  }
+
+  .btn-prev,
+  .btn-next {
+    border-radius: 6px !important;
+  }
 }
 
+/* --- Inputs --- */
 .el-input__wrapper {
   border-radius: var(--sl-radius) !important;
-  transition: box-shadow var(--sl-transition) !important;
+  transition: box-shadow var(--sl-transition), border-color var(--sl-transition) !important;
 }
 
 .el-select .el-input__wrapper {
   border-radius: var(--sl-radius) !important;
 }
 
+/* --- Form items --- */
+.el-form-item__label {
+  font-weight: 500 !important;
+  color: var(--sl-text) !important;
+  font-size: 13px !important;
+}
+
+/* --- Switch --- */
+.el-switch.is-checked .el-switch__core {
+  border-color: var(--sl-primary) !important;
+  background-color: var(--sl-primary) !important;
+}
+
+/* --- Message Box --- */
+.el-message-box {
+  border-radius: var(--sl-radius-lg) !important;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* --- Table footer utility --- */
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.batch-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Mobile (narrow screens) --- */
+$sl-mobile-breakpoint: 768px;
+
+@media (max-width: $sl-mobile-breakpoint) {
+  .app-container,
+  .page-container {
+    padding: 10px 12px;
+  }
+
+  .search-container {
+    padding: 12px 12px 8px;
+    margin-bottom: 10px;
+  }
+
+  /* Stack toolbar rows in list pages */
+  .card-header {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px;
+  }
+
+  .card-header .header-left,
+  .card-header .header-right,
+  .card-header .left {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .card-header .header-right {
+    justify-content: stretch;
+  }
+
+  .card-header .header-right .el-button + .el-button {
+    margin-left: 0;
+  }
+
+  /* 插件 / API 密钥：.left 内标题 + 搜索纵向排列 */
+  .card-header .left {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .card-header .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-header .left .toolbar-search-input.el-input,
+  .card-header .left .toolbar-search-input {
+    width: 100% !important;
+  }
+
+  .card-header .header-right .el-button {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* 仪表盘等：card-header-flex */
+  .card-header-flex {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 8px;
+  }
+
+  /* Wide tables: scroll inside card body, not whole page */
+  .el-card > .el-card__body {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .el-card .el-table {
+    min-width: 600px;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .el-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    row-gap: 8px;
+  }
+
+  .el-pagination .el-pagination__total,
+  .el-pagination .el-pagination__sizes {
+    margin-right: 0 !important;
+  }
+
+  /* Dialogs: nearly full width, scrollable body */
+  .el-dialog {
+    width: min(94vw, 100%) !important;
+    max-width: 94vw !important;
+    margin: 12px auto !important;
+  }
+
+  .el-dialog__body {
+    max-height: min(70vh, calc(100dvh - 200px));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Smaller card chrome */
+  .el-card .el-card__header {
+    padding: 12px 14px !important;
+  }
+
+  .el-card .el-card__body {
+    padding: 12px 14px !important;
+  }
+}
+
+/* --- Reduced motion --- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

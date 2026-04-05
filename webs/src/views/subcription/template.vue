@@ -138,10 +138,14 @@ const currentTableData = computed(() => {
     <el-card shadow="never">
       <template #header>
         <div class="card-header">
-          <span class="card-title">模板管理</span>
-          <el-button type="primary" @click="handleAddTemp">
-            <el-icon class="mr-1"><Plus /></el-icon>添加模板
-          </el-button>
+          <div class="header-left">
+            <span class="card-title">模板管理</span>
+          </div>
+          <div class="header-right">
+            <el-button type="primary" @click="handleAddTemp">
+              <el-icon class="mr-1"><Plus /></el-icon>添加模板
+            </el-button>
+          </div>
         </div>
       </template>
 
@@ -184,36 +188,6 @@ const currentTableData = computed(() => {
 </template>
 
 <style scoped>
-.page-container {
-  padding: 16px;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--sl-text);
-}
-
-.table-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.batch-actions {
-  display: flex;
-  gap: 8px;
-}
-
 .template-editor :deep(textarea) {
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
   font-size: 13px;
