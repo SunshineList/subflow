@@ -35,17 +35,23 @@ case "$machine_type" in
 esac
 
 # 下载文件
-cd ~ || exit 1
-curl -LO "https://github.com/SunshineList/subflow/releases/download/$latest_release/$file_name"
+TMP_DIR=$(mktemp -d)
+cd "$TMP_DIR" || exit 1
+curl -fLO "https://github.com/SunshineList/subflow/releases/download/$latest_release/$file_name"
 
-# 设置可执行
+if [ ! -f "$file_name" ]; then
+    printf "下载失败，请检查网络或版本号\n"
+    rm -rf "$TMP_DIR"
+    exit 1
+fi
+
+# 设置可执行并移动到指定目录
 chmod +x "$file_name"
-
-# 移动到指定目录
 mv "$file_name" "$INSTALL_DIR/subflow"
+rm -rf "$TMP_DIR"
 
 # 初始化系统
-cd $INSTALL_DIR
+cd "$INSTALL_DIR"
 ./subflow setting --username admin --password 123456
 
 # 创建服务

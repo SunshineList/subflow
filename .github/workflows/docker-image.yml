@@ -7,6 +7,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: '发布版本号 (例如 v1.0.0)，留空则自动生成'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -22,22 +27,53 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
+      - name: Determine release version
+        id: version
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.version }}" ]]; then
+            TAG="${{ github.event.inputs.version }}"
+            if [[ ! "$TAG" =~ ^v ]]; then
+              TAG="v${TAG}"
+            fi
+          else
+            DATE_TAG="v0.$(date -u +'%Y%m%d')"
+            EXISTING=$(git tag -l "${DATE_TAG}.*" | sort -V | tail -1)
+            if [ -z "$EXISTING" ]; then
+              TAG="${DATE_TAG}.1"
+            else
+              NUM=$(echo "$EXISTING" | awk -F. '{print $NF}')
+              TAG="${DATE_TAG}.$((NUM + 1))"
+            fi
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "📦 Release version: ${TAG}"
+
+      - name: Create and push tag
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v6
         with:
           go-version: '1.24.3'
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: 8
           run_install: false
@@ -48,21 +84,17 @@ jobs:
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup pnpm cache
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Install frontend dependencies
-        run: |
-          cd webs
-          pnpm install
-
       - name: Build frontend
         run: |
           cd webs
+          pnpm install
           pnpm run build
 
       - name: Copy frontend to static
@@ -71,52 +103,58 @@ jobs:
           mkdir -p static
           cp -r webs/dist/* static/
 
-      - name: Build Go binaries
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Build Go binaries (parallel)
         run: |
           mkdir -p build
-          GOOS=linux GOARCH=amd64 go build -tags=prod -ldflags="-s -w" -o build/subflow-linux-amd64 .
-          GOOS=linux GOARCH=arm64 go build -tags=prod -ldflags="-s -w" -o build/subflow-linux-arm64 .
-          GOOS=windows GOARCH=amd64 go build -tags=prod -ldflags="-s -w" -o build/subflow-windows-amd64.exe .
-          GOOS=darwin GOARCH=amd64 go build -tags=prod -ldflags="-s -w" -o build/subflow-darwin-amd64 .
-          GOOS=darwin GOARCH=arm64 go build -tags=prod -ldflags="-s -w" -o build/subflow-darwin-arm64 .
+          GOOS=linux   GOARCH=amd64 go build -tags=prod -ldflags="-s -w" -o build/subflow-linux-amd64 . &
+          GOOS=linux   GOARCH=arm64 go build -tags=prod -ldflags="-s -w" -o build/subflow-linux-arm64 . &
+          GOOS=windows GOARCH=amd64 go build -tags=prod -ldflags="-s -w" -o build/subflow-windows-amd64.exe . &
+          GOOS=darwin  GOARCH=amd64 go build -tags=prod -ldflags="-s -w" -o build/subflow-darwin-amd64 . &
+          GOOS=darwin  GOARCH=arm64 go build -tags=prod -ldflags="-s -w" -o build/subflow-darwin-arm64 . &
+          wait
+          ls -lh build/
 
       - name: Generate changelog
-        if: startsWith(github.ref, 'refs/tags/')
-        id: changelog
         run: |
-          CURRENT_TAG=${GITHUB_REF#refs/tags/}
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
-          echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
+          CURRENT_TAG="${{ steps.version.outputs.tag }}"
+          PREVIOUS_TAG=$(git tag -l 'v*' --sort=-v:refname | grep -v "$CURRENT_TAG" | head -1 || echo "")
 
           if [ -z "$PREVIOUS_TAG" ]; then
-            echo "## 🎉 首次发布" > changelog.md
+            echo "## 🎉 首次发布 ${CURRENT_TAG}" > changelog.md
             echo "" >> changelog.md
             echo "### 📝 所有提交:" >> changelog.md
             git log --pretty=format:"- %s (%h)" >> changelog.md
           else
-            echo "## 🚀 更新内容 ($PREVIOUS_TAG -> $CURRENT_TAG)" > changelog.md
+            echo "## 🚀 更新内容 ($PREVIOUS_TAG → $CURRENT_TAG)" > changelog.md
             echo "" >> changelog.md
             echo "### 📝 提交记录:" >> changelog.md
             git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..$CURRENT_TAG >> changelog.md
           fi
 
           echo "" >> changelog.md
-          echo "### Release Files:" >> changelog.md
-          echo "- \`subflow-linux-amd64\` - Linux x64" >> changelog.md
-          echo "- \`subflow-linux-arm64\` - Linux ARM64" >> changelog.md
-          echo "- \`subflow-windows-amd64.exe\` - Windows x64" >> changelog.md
-          echo "- \`subflow-darwin-amd64\` - macOS x64" >> changelog.md
-          echo "- \`subflow-darwin-arm64\` - macOS ARM64 (Apple Silicon)" >> changelog.md
+          echo "" >> changelog.md
+          echo "### 📦 下载:" >> changelog.md
+          echo "| 文件 | 平台 |" >> changelog.md
+          echo "|------|------|" >> changelog.md
+          echo "| \`subflow-linux-amd64\` | Linux x64 |" >> changelog.md
+          echo "| \`subflow-linux-arm64\` | Linux ARM64 |" >> changelog.md
+          echo "| \`subflow-windows-amd64.exe\` | Windows x64 |" >> changelog.md
+          echo "| \`subflow-darwin-amd64\` | macOS x64 |" >> changelog.md
+          echo "| \`subflow-darwin-arm64\` | macOS ARM64 (Apple Silicon) |" >> changelog.md
+          echo "" >> changelog.md
+          echo "### 🐳 Docker:" >> changelog.md
+          echo "\`\`\`bash" >> changelog.md
+          echo "docker pull ghcr.io/sunshinelist/subflow:${CURRENT_TAG}" >> changelog.md
+          echo "\`\`\`" >> changelog.md
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Log in to Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -127,18 +165,14 @@ jobs:
         run: |
           IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
           IMAGE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-            TAG=${GITHUB_REF#refs/tags/}
-            echo "tags=${IMAGE}:${TAG},${IMAGE}:latest" >> $GITHUB_OUTPUT
-          else
-            SHORT_SHA=$(git rev-parse --short HEAD)
-            echo "tags=${IMAGE}:dev-${SHORT_SHA},${IMAGE}:dev" >> $GITHUB_OUTPUT
-          fi
+          TAG="${{ steps.version.outputs.tag }}"
+          echo "tags=${IMAGE}:${TAG},${IMAGE}:latest" >> $GITHUB_OUTPUT
 
       - name: Build and Push Multi-Arch Docker Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
+          file: Dockerfile.ci
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.docker_tags.outputs.tags }}
@@ -146,11 +180,10 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.changelog.outputs.current_tag }}
-          name: Release ${{ steps.changelog.outputs.current_tag }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release ${{ steps.version.outputs.tag }}
           body_path: changelog.md
           files: |
             build/subflow-linux-amd64
