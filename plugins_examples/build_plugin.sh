@@ -22,8 +22,8 @@ echo "📦 插件输出: $SO_FILE"
 
 # ===== 🌐 下载主项目 go.mod 和 go.sum =====
 echo "🌐 下载 go.mod 和 go.sum..."
-wget -q -O go.mod https://raw.githubusercontent.com/eun1e/sublinkE/main/go.mod
-wget -q -O go.sum https://raw.githubusercontent.com/eun1e/sublinkE/main/go.sum
+wget -q -O go.mod https://raw.githubusercontent.com/SunshineList/subflow/main/go.mod
+wget -q -O go.sum https://raw.githubusercontent.com/SunshineList/subflow/main/go.sum
 
 # ===== 🔍 检查插件文件是否存在 =====
 if [ ! -f "$PLUGIN_FILE" ]; then

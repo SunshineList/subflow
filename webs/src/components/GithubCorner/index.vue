@@ -1,6 +1,6 @@
 <template>
   <a
-    href="https://github.com/SunshineList/sublinkE"
+    href="https://github.com/SunshineList/subflow"
     target="_blank"
     class="github-corner"
     aria-label="View source on Github"

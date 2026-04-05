@@ -12,9 +12,11 @@
 
 </div>
 
-# Project Introduction
+# SubFlow
 
-`sublinkE` is an open-source node subscription conversion and generation management system based on secondary development of [sublinkX](https://github.com/gooaclok819/sublinkX).It is recommended that users give priority to referring to and using the original project, and we sincerely thank the original author for their efforts and contributions.
+**Open-source subscription conversion management tool**
+
+Based on secondary development of [eun1e/sublinkE](https://github.com/eun1e/sublinkE). We sincerely thank the original author for their efforts and contributions.
 
 - Frontend based on [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin);
 - Backend using Go + Gin + Gorm;
@@ -45,17 +47,17 @@
 
 ## 🚀 Run with Docker
 ```bash
-docker run --name sublinke -p 8000:8000 \
+docker run --name subflow -p 8000:8000 \
 -v $PWD/db:/app/db \
 -v $PWD/template:/app/template \
 -v $PWD/logs:/app/logs \
 -v $PWD/plugins:/app/plugins \
--d eun1e/sublinke 
+-d ghcr.io/sunshinelist/subflow
 ```
 
 ## ⚡ One-click Installation
 ```bash
-wget https://raw.githubusercontent.com/eun1e/sublinkE/refs/heads/main/install.sh   && sh install.sh
+wget https://raw.githubusercontent.com/SunshineList/subflow/refs/heads/main/install.sh   && sh install.sh
 ```
 
 > ⚠ **Note**  
@@ -105,7 +107,7 @@ The system includes the following example plugins for reference(May become inval
 
 | Plugin Name | Description | Source Code | Compiled Version |
 |-------------|-------------|------------|-----------------|
-| **Email Notification Plugin** | Monitors login events and sends email notifications | [email_plugin.go](https://github.com/eun1e/sublinkE/blob/main/plugins_examples/email_plugin.go) | [Download .so file](https://raw.githubusercontent.com/eun1e/sublinkE/main/plugins_examples/email_plugin.so) |
+| **Email Notification Plugin** | Monitors login events and sends email notifications | [email_plugin.go](https://github.com/SunshineList/subflow/blob/main/plugins_examples/email_plugin.go) | [Download .so file](https://raw.githubusercontent.com/SunshineList/subflow/main/plugins_examples/email_plugin.so) |
 
 ### Plugin Configuration and Management
 
@@ -126,7 +128,7 @@ Custom plugin development workflow:
 
 ```bash
 # Compile plugin
-wget https://raw.githubusercontent.com/eun1e/sublinkE/main/plugins_examples/build_plugin.sh
+wget https://raw.githubusercontent.com/SunshineList/subflow/main/plugins_examples/build_plugin.sh
 chmod +x build_plugin.sh
 ./build_plugin.sh your_plugin.go
 # Copy the generated .so file to the plugins directory

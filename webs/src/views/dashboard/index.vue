@@ -230,8 +230,8 @@
             </div>
             <div class="info-row">
               <span class="info-label">项目地址</span>
-              <a href="https://github.com/SunshineList/sublinkE" target="_blank" class="info-link">
-                SunshineList/sublinkE <el-icon :size="12"><TopRight /></el-icon>
+              <a href="https://github.com/SunshineList/subflow" target="_blank" class="info-link">
+                SunshineList/subflow <el-icon :size="12"><TopRight /></el-icon>
               </a>
             </div>
             <div class="info-row">

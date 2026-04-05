@@ -10,7 +10,7 @@
 [![Vue](https://img.shields.io/badge/Vue-3.4-4FC08D?logo=vue.js)](https://vuejs.org/)
 [![Element Plus](https://img.shields.io/badge/Element%20Plus-2.6-409EFF)](https://element-plus.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Docker](https://img.shields.io/badge/Docker-available-2496ED?logo=docker)](https://hub.docker.com/)
+[![Docker](https://img.shields.io/badge/GHCR-available-2496ED?logo=docker)](https://ghcr.io)
 
 中文 | [English](README.en-US.md)
 
@@ -59,7 +59,7 @@ SubFlow 是一个高自由度的开源订阅转换管理工具，支持多种代
 mkdir subflow && cd subflow
 
 # 下载 docker-compose.yml
-wget https://raw.githubusercontent.com/SunshineList/sublinkE/main/docker-compose.yml
+wget https://raw.githubusercontent.com/SunshineList/subflow/main/docker-compose.yml
 
 # 启动服务
 docker compose up -d
@@ -81,7 +81,7 @@ docker run --name subflow -p 8000:8000 \
 ### 一键安装
 
 ```bash
-wget https://raw.githubusercontent.com/SunshineList/sublinkE/refs/heads/main/install.sh && sh install.sh
+wget https://raw.githubusercontent.com/SunshineList/subflow/main/install.sh && sh install.sh
 ```
 
 > **注意**：在 Alpine Linux 上运行一键安装脚本时，由于 Alpine 使用 `musl` 而非 `glibc`，插件模块无法正常工作。推荐优先使用 Docker 部署以获得最佳兼容性。
@@ -118,7 +118,7 @@ InterestedEvents() []plugins.EventType
 ### 编译插件
 
 ```bash
-wget https://raw.githubusercontent.com/SunshineList/sublinkE/main/plugins_examples/build_plugin.sh
+wget https://raw.githubusercontent.com/SunshineList/subflow/main/plugins_examples/build_plugin.sh
 chmod +x build_plugin.sh
 ./build_plugin.sh your_plugin.go
 cp your_plugin.so plugins/
