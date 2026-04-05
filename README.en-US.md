@@ -1,147 +1,191 @@
 <div align="center">
-<img src="webs/src/assets/logo.png" width="150px" height="150px" />
-</div>
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Vue-5.0.8-brightgreen.svg"/>
-  <img src="https://img.shields.io/badge/Go-1.24.3-green.svg"/>
-  <img src="https://img.shields.io/badge/Element%20Plus-2.6.1-blue.svg"/>
-  <img src="https://img.shields.io/badge/license-MIT-green.svg"/>
-  <div align="center"> <a href="README.md">中文</a> | English</div>
-
-
-</div>
+<img src="webs/src/assets/logo.png" width="120px" height="120px" />
 
 # SubFlow
 
-**Open-source subscription conversion management tool**
+🚀 **All-in-one Proxy Subscription Conversion & Management Platform**
 
-Based on secondary development of [eun1e/sublinkE](https://github.com/eun1e/sublinkE). We sincerely thank the original author for their efforts and contributions.
+Effortlessly manage all your proxy nodes and convert between client formats
 
-- Frontend based on [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin);
-- Backend using Go + Gin + Gorm;
-- Default account: admin Password: 123456, please make sure to change it after installation;
+[![Go](https://img.shields.io/badge/Go-1.24.3-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Vue](https://img.shields.io/badge/Vue-3.4-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![Element Plus](https://img.shields.io/badge/Element%20Plus-2.6-409EFF?logo=element&logoColor=white)](https://element-plus.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Docker Image](https://img.shields.io/badge/GHCR-ready-2496ED?logo=docker&logoColor=white)](https://ghcr.io/sunshinelist/subflow)
+[![Release](https://img.shields.io/github/v/release/SunshineList/subflow?color=blue)](https://github.com/SunshineList/subflow/releases)
 
-# Modifications
+[中文](README.md) | English
 
+</div>
 
-- [x] Fix some page bugs
-- [x] Support Clash `dialer-proxy` attribute
-- [x] Allow adding and using API KEY to access API
-- [x] Import and schedule updates of nodes from subscription links
-- [x] Support AnyTLS and Socks5 protocols
-- [x] Subscription node sorting
-- [x] Support plugin extensions (experimental)
-- [ ] ...
+---
 
-# Project Features
+## ✨ Why SubFlow?
 
-- High flexibility and security, supporting subscription record access and simple configuration management;
-- Support for multiple client protocols and formats, including:
-    - v2ray (base64 universal format)
-    - clash (support ss, ssr, trojan, vmess, vless, hy, hy2, tuic, AnyTLS, Socks5)
-    - surge (support ss, trojan, vmess, hy2, tuic)
-- Added token authorization and subscription import functionality, enhancing security and convenience.
+<table>
+<tr>
+<td width="50%">
 
-# 📦 Installation Guide
+### 🎨 Redesigned Modern UI
+- SaaS-style interface with deep Element Plus customization
+- Glassmorphism login, gradient cards, smooth animations
+- Data visualization dashboard (protocol distribution, access stats, task status)
+- Dark mode support, responsive layout
 
-## 🚀 Run with Docker
+</td>
+<td width="50%">
+
+### 🔄 Smart Subscription Management
+- Import external subscription links with auto node parsing
+- Cron-based scheduled updates to keep nodes fresh
+- **Auto-numbering for duplicate node names** — no more update failures
+- Drag-and-drop sorting for flexible node ordering
+
+</td>
+</tr>
+<tr>
+<td>
+
+### 📡 Full Protocol Coverage
+- **V2Ray** — Base64 universal format
+- **Clash** — SS / SSR / Trojan / VMess / VLESS / Hysteria / Hysteria2 / TUIC / AnyTLS / Socks5
+- **Surge** — SS / Trojan / VMess / Hysteria2 / TUIC
+- Clash `dialer-proxy` chained proxy support
+
+</td>
+<td>
+
+### 🧩 Plugin Extension System
+- Hot-pluggable architecture, no core code changes needed
+- Web UI for plugin management and configuration
+- Complete development examples and build scripts
+- API event listeners for custom logic
+
+</td>
+</tr>
+<tr>
+<td>
+
+### 🔐 Secure & Self-hosted
+- Token-authorized API access
+- Independent API Key management
+- Full subscription access logging
+- Self-hosted, your data stays with you
+
+</td>
+<td>
+
+### ⚡ Ready Out of the Box
+- Docker one-click deploy, multi-arch (amd64 / arm64)
+- One-click install script with auto service registration
+- SQLite zero-config database
+- Automated CI/CD build & release
+
+</td>
+</tr>
+</table>
+
+## 📸 Screenshots
+
+| Dashboard | Subscription Management |
+|:---:|:---:|
+| ![Dashboard](webs/src/assets/1.png) | ![Subscriptions](webs/src/assets/2.png) |
+
+| Node Management | Template Editor |
+|:---:|:---:|
+| ![Nodes](webs/src/assets/3.png) | ![Templates](webs/src/assets/4.png) |
+
+| Plugin System | Login Page |
+|:---:|:---:|
+| ![Plugins](webs/src/assets/5.png) | ![Login](webs/src/assets/6.png) |
+
+## 🚀 Quick Start
+
+### Docker Compose (Recommended)
+
+```bash
+mkdir subflow && cd subflow
+wget https://raw.githubusercontent.com/SunshineList/subflow/main/docker-compose.yml
+docker compose up -d
+```
+
+Visit `http://your-server-ip:8000` — Default credentials: `admin` / `123456`
+
+### Docker Run
+
 ```bash
 docker run --name subflow -p 8000:8000 \
--v $PWD/db:/app/db \
--v $PWD/template:/app/template \
--v $PWD/logs:/app/logs \
--v $PWD/plugins:/app/plugins \
--d ghcr.io/sunshinelist/subflow
+  -v $PWD/db:/app/db \
+  -v $PWD/template:/app/template \
+  -v $PWD/logs:/app/logs \
+  -v $PWD/plugins:/app/plugins \
+  -d ghcr.io/sunshinelist/subflow
 ```
 
-## ⚡ One-click Installation
+### One-click Install (Linux)
+
 ```bash
-wget https://raw.githubusercontent.com/SunshineList/subflow/refs/heads/main/install.sh   && sh install.sh
+wget https://raw.githubusercontent.com/SunshineList/subflow/main/install.sh && sh install.sh
 ```
 
-> ⚠ **Note**  
-> When running the one-click installation script on **Alpine Linux**, the plugin module may not work properly because Alpine uses `musl` instead of `glibc`.  
-> It is recommended to use **Docker deployment** for the best compatibility, or choose distributions such as **Debian / Ubuntu**.
+> ⚠️ Alpine Linux uses `musl` instead of `glibc`, so plugins won't work. Docker deployment is recommended.
 
+## 🧩 Plugin Development
 
-# Plugin Description
+Three steps to extend SubFlow:
 
-`sublinkE` provides a flexible plugin system, allowing developers to extend system functionality without modifying core code.
+```bash
+# 1. Reference the example plugin
+cat plugins_examples/email_plugin.go
 
-## Plugin Development Guide
+# 2. Build the plugin
+wget https://raw.githubusercontent.com/SunshineList/subflow/main/plugins_examples/build_plugin.sh
+chmod +x build_plugin.sh && ./build_plugin.sh your_plugin.go
 
-### Basic Steps
+# 3. Deploy and enable via Web UI
+cp your_plugin.so plugins/
+```
 
-1. **Create Plugin File**: Refer to `plugins_examples/email_plugin.go` to write custom plugins
-2. **Compile Plugin**: Use `plugins_examples/build_plugin.sh email_plugin.go` to compile into a `.so` file
-3. **Deploy Plugin**: Place the compiled `.so` file into the `plugins` directory
-
-### Plugin Interface Implementation
-
-All plugins must implement the `plugins.Plugin` interface, which includes the following core methods:
+<details>
+<summary>📋 Plugin Interface</summary>
 
 ```go
-// Required methods
-Name() string                           // Plugin name
-Version() string                        // Plugin version
-Description() string                    // Plugin description
-DefaultConfig() map[string]interface{}  // Default configuration
-SetConfig(map[string]interface{})       // Set configuration
-Init() error                            // Initialize
-Close() error                           // Cleanup
-
-// Event handling method (API event listening)
-OnAPIEvent(ctx *gin.Context, event plugins.EventType, path string, 
-           statusCode int, requestBody interface{}, 
-           responseBody interface{}) error
-
-// Declare API paths and event types the plugin is interested in
-InterestedAPIs() []string
-InterestedEvents() []plugins.EventType
+type Plugin interface {
+    Name() string
+    Version() string
+    Description() string
+    DefaultConfig() map[string]interface{}
+    SetConfig(map[string]interface{})
+    Init() error
+    Close() error
+    OnAPIEvent(ctx *gin.Context, event EventType, path string,
+               statusCode int, requestBody interface{},
+               responseBody interface{}) error
+    InterestedAPIs() []string
+    InterestedEvents() []EventType
+}
 ```
 
-### Plugin Examples
+</details>
 
-The system includes the following example plugins for reference(May become invalid after version updates; it's recommended to compile it yourself.):
+## 🏗️ Tech Stack
 
-| Plugin Name | Description | Source Code | Compiled Version |
-|-------------|-------------|------------|-----------------|
-| **Email Notification Plugin** | Monitors login events and sends email notifications | [email_plugin.go](https://github.com/SunshineList/subflow/blob/main/plugins_examples/email_plugin.go) | [Download .so file](https://raw.githubusercontent.com/SunshineList/subflow/main/plugins_examples/email_plugin.so) |
+| Layer | Technology |
+|-------|------------|
+| Frontend | Vue 3 + Element Plus + Vite + Pinia + TypeScript |
+| Backend | Go + Gin + Gorm + SQLite |
+| Deployment | Docker (multi-arch) + GitHub Actions CI/CD |
+| Package Mgr | pnpm (frontend) + Go Modules (backend) |
 
-### Plugin Configuration and Management
+## 🙏 Acknowledgements
 
-Plugins can be managed through the Web interface:
-- Enable/disable plugins
-- Configure plugin parameters
-- View plugin status
+This project is based on the following open-source projects:
 
-## Developing Custom Plugins
+- [eun1e/sublinkE](https://github.com/eun1e/sublinkE) — Original project, thanks to eun1e for the hard work
+- [sublinkX](https://github.com/gooaclok819/sublinkX) — Upstream project of sublinkE
+- [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin) — Frontend template framework
 
-Custom plugin development workflow:
+## 📄 License
 
-1. Create a Go plugin file, implementing the `plugins.Plugin` interface
-2. Export the `GetPlugin()` function, returning the plugin instance
-3. Define API paths and event types the plugin is concerned with
-4. Implement event handling logic
-5. Use the build script to compile the plugin
-
-```bash
-# Compile plugin
-wget https://raw.githubusercontent.com/SunshineList/subflow/main/plugins_examples/build_plugin.sh
-chmod +x build_plugin.sh
-./build_plugin.sh your_plugin.go
-# Copy the generated .so file to the plugins directory
-cp your_plugin.so ../plugins/
-```
-
-For more advanced features and detailed API documentation, please refer to the code examples.
-
-# Project Preview
-
-![Preview1](webs/src/assets/1.png)
-![Preview2](webs/src/assets/2.png)
-![Preview3](webs/src/assets/3.png)
-![Preview4](webs/src/assets/4.png)
-![Preview5](webs/src/assets/5.png)
-![Preview6](webs/src/assets/6.png)
+[MIT License](LICENSE)
