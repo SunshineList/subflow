@@ -158,14 +158,16 @@ const currentTableData = computed(() => {
           </template>
         </el-table-column>
         <el-table-column prop="create_date" label="创建时间" sortable width="180" />
-        <el-table-column fixed="right" label="操作" width="140">
+        <el-table-column fixed="right" label="操作" min-width="148" width="148">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.row)">
-              <el-icon><Edit /></el-icon>编辑
-            </el-button>
-            <el-button link type="danger" size="small" @click="handleDel(scope.row)">
-              <el-icon><Delete /></el-icon>删除
-            </el-button>
+            <div class="sl-table-actions">
+              <el-button link type="primary" size="small" @click="handleEdit(scope.row)">
+                <el-icon><Edit /></el-icon>编辑
+              </el-button>
+              <el-button link type="danger" size="small" @click="handleDel(scope.row)">
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>

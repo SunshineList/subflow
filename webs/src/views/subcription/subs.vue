@@ -532,7 +532,7 @@ const handleCancelSort = () => {
           </template>
         </el-table-column>
         <el-table-column prop="CreateDate" label="创建时间" sortable width="180" />
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column label="操作" min-width="300" width="300" fixed="right">
           <template #default="scope">
             <div v-if="scope.row.Nodes" class="sl-table-actions">
               <el-button link type="primary" size="small" @click="handleIplogs(scope.row)">
@@ -557,7 +557,7 @@ const handleCancelSort = () => {
                 </el-button>
               </template>
             </div>
-            <div v-else>
+            <div v-else class="sl-table-actions">
               <el-button link type="primary" size="small" @click="copyInfo(scope.row)">
                 <el-icon><CopyDocument /></el-icon>复制
               </el-button>

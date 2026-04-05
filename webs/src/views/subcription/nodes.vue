@@ -473,17 +473,19 @@ const formatDateTime = (dateTimeString: string) => {
         </el-table-column>
         <el-table-column prop="Link" label="节点链接" sortable :show-overflow-tooltip="true" min-width="250" />
         <el-table-column prop="CreateDate" label="创建时间" sortable width="180" />
-        <el-table-column fixed="right" label="操作" width="160">
+        <el-table-column fixed="right" label="操作" min-width="188" width="188">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="copyInfo(scope.row)">
-              <el-icon><CopyDocument /></el-icon>复制
-            </el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(scope.row)">
-              <el-icon><Edit /></el-icon>编辑
-            </el-button>
-            <el-button link type="danger" size="small" @click="handleDel(scope.row)">
-              <el-icon><Delete /></el-icon>删除
-            </el-button>
+            <div class="sl-table-actions">
+              <el-button link type="primary" size="small" @click="copyInfo(scope.row)">
+                <el-icon><CopyDocument /></el-icon>复制
+              </el-button>
+              <el-button link type="primary" size="small" @click="handleEdit(scope.row)">
+                <el-icon><Edit /></el-icon>编辑
+              </el-button>
+              <el-button link type="danger" size="small" @click="handleDel(scope.row)">
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -546,10 +548,12 @@ const formatDateTime = (dateTimeString: string) => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="操作" min-width="112" width="112" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleEditSubScheduler(scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDeleteSubScheduler(scope.row)">删除</el-button>
+            <div class="sl-table-actions">
+              <el-button link type="primary" size="small" @click="handleEditSubScheduler(scope.row)">编辑</el-button>
+              <el-button link type="danger" size="small" @click="handleDeleteSubScheduler(scope.row)">删除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>

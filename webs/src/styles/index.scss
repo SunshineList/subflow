@@ -90,16 +90,33 @@
   max-width: 100%;
 }
 
-/* 表格单元格内多按钮横向排列并可换行 */
+/*
+ * 表格「操作」列：必须单行横向排列；flex-wrap 会导致窄列下每颗按钮独占一行、行高失控
+ */
 .sl-table-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 6px;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
+  gap: 0 2px;
+  vertical-align: middle;
+  max-width: max-content;
 }
 
 .sl-table-actions .el-button {
   margin-left: 0 !important;
+  flex-shrink: 0;
+}
+
+/* 操作列 link 按钮略收紧，便于三枚并排落在固定列宽内 */
+.el-table .sl-table-actions .el-button.is-link.el-button--small {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  font-size: 12px !important;
+}
+
+.el-table .sl-table-actions .el-button.is-link.el-button--small .el-icon {
+  margin-right: 1px !important;
 }
 
 /* --- Buttons: Base --- */
@@ -272,12 +289,13 @@
   }
 }
 
-/* --- Table action button group --- */
+/* --- Table action button group（兼容旧类名） --- */
 .action-btns {
-  display: flex;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 2px;
-  flex-wrap: wrap;
+  gap: 0 2px;
 }
 
 /* --- Dialogs --- */
