@@ -75,7 +75,7 @@ docker run --name subflow -p 8000:8000 \
   -v $PWD/template:/app/template \
   -v $PWD/logs:/app/logs \
   -v $PWD/plugins:/app/plugins \
-  -d sunshinelist/subflow
+  -d ghcr.io/sunshinelist/subflow
 ```
 
 ### 一键安装

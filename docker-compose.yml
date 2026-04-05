@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   subflow:
-    image: sunshinelist/subflow:latest
+    image: ghcr.io/sunshinelist/subflow:latest
     container_name: subflow
     restart: unless-stopped
     ports:
