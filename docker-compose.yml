@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  subflow:
+    image: sunshinelist/subflow:latest
+    container_name: subflow
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db:/app/db
+      - ./template:/app/template
+      - ./logs:/app/logs
+      - ./plugins:/app/plugins
+    environment:
+      - TZ=Asia/Shanghai
+      - API_ENCRYPTION_KEY=${API_ENCRYPTION_KEY:-}

@@ -1,0 +1,68 @@
+/** 全局SCSS变量 - SaaS Dashboard 设计系统 */
+
+:root {
+  --sl-primary: #2563EB;
+  --sl-primary-light: #3B82F6;
+  --sl-primary-lighter: #60A5FA;
+  --sl-accent: #F97316;
+  --sl-success: #10B981;
+  --sl-warning: #F59E0B;
+  --sl-danger: #EF4444;
+  --sl-info: #6366F1;
+
+  --sl-bg: #F8FAFC;
+  --sl-bg-card: #FFFFFF;
+  --sl-text: #1E293B;
+  --sl-text-secondary: #64748B;
+  --sl-text-muted: #94A3B8;
+  --sl-border: #E2E8F0;
+  --sl-border-light: #F1F5F9;
+
+  --sl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --sl-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --sl-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --sl-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  --sl-radius: 8px;
+  --sl-radius-lg: 12px;
+  --sl-radius-xl: 16px;
+
+  --sl-transition: 200ms ease-out;
+
+  --menu-background: #0F172A;
+  --menu-text: #CBD5E1;
+  --menu-active-text: #FFFFFF;
+  --menu-hover: #1E293B;
+  --sidebar-logo-background: #0F172A;
+}
+
+html.dark {
+  --sl-bg: #0F172A;
+  --sl-bg-card: #1E293B;
+  --sl-text: #F1F5F9;
+  --sl-text-secondary: #94A3B8;
+  --sl-text-muted: #64748B;
+  --sl-border: #334155;
+  --sl-border-light: #1E293B;
+
+  --sl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --sl-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --sl-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+
+  --menu-background: var(--el-bg-color-overlay);
+  --menu-text: #E2E8F0;
+  --menu-active-text: #FFFFFF;
+  --menu-hover: rgb(255 255 255 / 8%);
+  --sidebar-logo-background: rgb(0 0 0 / 20%);
+}
+
+$menu-background: var(--menu-background);
+$menu-text: var(--menu-text);
+$menu-active-text: var(--menu-active-text);
+$menu-hover: var(--menu-hover);
+$sidebar-logo-background: var(--sidebar-logo-background);
+
+$sidebar-width: 220px;
+$sidebar-width-collapsed: 54px;
+$navbar-height: 56px;
+$tags-view-height: 34px;
