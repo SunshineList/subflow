@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { ref, onMounted, computed, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete, View, Edit, CopyDocument, Sort, Check, Close, Link as LinkIcon } from '@element-plus/icons-vue'
+import { Plus, Delete, View, Edit, CopyDocument, Sort, Check, Close, Link as LinkIcon, Clock } from '@element-plus/icons-vue'
 import { getSubs, AddSub, DelSub, UpdateSub, SortSub } from "@/api/subcription/subs"
 import { getTemp } from "@/api/subcription/temp"
 import { getNodes } from "@/api/subcription/node"
@@ -12,6 +12,9 @@ interface Sub {
   ID: number;
   Name: string;
   CreateDate: string;
+  TotalTraffic: number;
+  UsedTraffic: number;
+  ExpireTime: number;
   Config: Config;
   Nodes: Node[];
   SubLogs: SubLogs[];
@@ -59,6 +62,11 @@ const IplogsList = ref<SubLogs[]>([])
 const qrcode = ref('')
 const templist = ref<Temp[]>([])
 
+// 流量与到期时间相关
+const TotalTrafficVal = ref(0) // 单位 GB
+const UsedTrafficVal = ref(0)  // 单位 GB
+const ExpireDate = ref<string | null>(null)
+
 async function getsubs() {
   const { data } = await getSubs();
   tableData.value = data;
@@ -84,21 +92,21 @@ const addSubs = async () => {
     "udp": checkList.value.includes('udp') ? true : false,
     "cert": checkList.value.includes('cert') ? true : false
   })
+  const formData = new FormData();
+  formData.append('config', config);
+  formData.append('name', Subname.value.trim());
+  formData.append('nodes', value1.value.join(','));
+  formData.append('totalTraffic', String(TotalTrafficVal.value * 1024 * 1024 * 1024));
+  formData.append('usedTraffic', String(UsedTrafficVal.value * 1024 * 1024 * 1024));
+  formData.append('expireTime', ExpireDate.value ? String(Math.floor(new Date(ExpireDate.value).getTime() / 1000)) : '0');
+
   if (SubTitle.value === '添加订阅') {
-    await AddSub({
-      config: config,
-      name: Subname.value.trim(),
-      nodes: value1.value.join(',')
-    })
+    await AddSub(formData)
     getsubs()
     ElMessage.success("添加成功");
   } else {
-    await UpdateSub({
-      config: config,
-      name: Subname.value.trim(),
-      nodes: value1.value.join(','),
-      oldname: oldSubname.value
-    })
+    formData.append('oldname', oldSubname.value);
+    await UpdateSub(formData)
     getsubs()
     ElMessage.success("更新成功");
   }
@@ -164,6 +172,9 @@ const handleAddSub = () => {
   checkList.value = []
   Clash.value = './template/clash.yaml'
   Surge.value = './template/surge.conf'
+  TotalTrafficVal.value = 0
+  UsedTrafficVal.value = 0
+  ExpireDate.value = null
   dialogVisible.value = true
   value1.value = []
 }
@@ -190,6 +201,9 @@ const handleEdit = (row: any) => {
       }
       Clash.value = config.clash
       Surge.value = config.surge
+      TotalTrafficVal.value = tableData.value[i].TotalTraffic / (1024 * 1024 * 1024)
+      UsedTrafficVal.value = tableData.value[i].UsedTraffic / (1024 * 1024 * 1024)
+      ExpireDate.value = tableData.value[i].ExpireTime ? new Date(tableData.value[i].ExpireTime * 1000).toISOString() : null
       dialogVisible.value = true
       value1.value = tableData.value[i].Nodes.map((item) => item.Name)
     }
@@ -476,6 +490,23 @@ const handleCancelSort = () => {
             <el-option v-for="item in NodesList" :key="item.Name" :label="item.Name" :value="item.Name" />
           </el-select>
         </el-form-item>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="总流量 (GB)">
+              <el-input-number v-model="TotalTrafficVal" :min="0" style="width: 100%" placeholder="不限" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="已用流量 (GB)">
+              <el-input-number v-model="UsedTrafficVal" :min="0" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-form-item label="到期时间">
+          <el-date-picker v-model="ExpireDate" type="datetime" placeholder="选择到期时间" style="width: 100%" />
+        </el-form-item>
       </el-form>
 
       <template #footer>
@@ -504,10 +535,22 @@ const handleCancelSort = () => {
         <el-table-column type="selection" fixed width="50" />
         <el-table-column prop="Name" label="名称 / 节点" min-width="200">
           <template #default="{ row }">
-            <el-tag v-if="row.Nodes" type="primary" effect="plain">
-              {{ row.Name }}
-              <span v-if="sortingSubscriptionId === row.ID" class="sorting-badge">排序中</span>
-            </el-tag>
+            <div v-if="row.Nodes">
+              <el-tag type="primary" effect="plain" class="mb-1">
+                {{ row.Name }}
+                <span v-if="sortingSubscriptionId === row.ID" class="sorting-badge">排序中</span>
+              </el-tag>
+              <div class="sub-info-preview" v-if="row.TotalTraffic > 0 || row.ExpireTime > 0">
+                <el-tooltip :content="`已用: ${(row.UsedTraffic / (1024 ** 3)).toFixed(2)}GB / 总量: ${(row.TotalTraffic / (1024 ** 3)).toFixed(2)}GB`" placement="top">
+                  <el-progress :percentage="Math.min(100, (row.UsedTraffic / row.TotalTraffic * 100) || 0)" 
+                    :status="row.UsedTraffic > row.TotalTraffic ? 'exception' : ''"
+                    :stroke-width="4" style="width: 120px" v-if="row.TotalTraffic > 0" />
+                </el-tooltip>
+                <div class="expire-time-text" v-if="row.ExpireTime > 0">
+                  <el-icon><Clock /></el-icon> {{ new Date(row.ExpireTime * 1000).toLocaleDateString() }}
+                </div>
+              </div>
+            </div>
             <div v-else
               :draggable="sortingSubscriptionId !== null && row.parentId === sortingSubscriptionId"
               @dragstart="(e) => handleDragStart(e, row.ID)"
@@ -688,5 +731,24 @@ const handleCancelSort = () => {
 
 .mr-1 {
   margin-right: 4px;
+}
+
+.sub-info-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  margin-top: 4px;
+}
+
+.expire-time-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mb-1 {
+  margin-bottom: 4px;
 }
 </style>

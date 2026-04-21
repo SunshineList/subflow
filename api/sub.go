@@ -67,8 +67,15 @@ func SubAdd(c *gin.Context) {
 		sub.Nodes = append(sub.Nodes, node)
 	}
 
+	totalTraffic, _ := strconv.ParseInt(c.PostForm("totalTraffic"), 10, 64)
+	usedTraffic, _ := strconv.ParseInt(c.PostForm("usedTraffic"), 10, 64)
+	expireTime, _ := strconv.ParseInt(c.PostForm("expireTime"), 10, 64)
+
 	sub.Config = config
 	sub.Name = name
+	sub.TotalTraffic = totalTraffic
+	sub.UsedTraffic = usedTraffic
+	sub.ExpireTime = expireTime
 	sub.CreateDate = time.Now().Format("2006-01-02 15:04:05")
 
 	err := sub.Add()
@@ -113,9 +120,16 @@ func SubUpdate(c *gin.Context) {
 		})
 		return
 	}
+	totalTraffic, _ := strconv.ParseInt(c.PostForm("totalTraffic"), 10, 64)
+	usedTraffic, _ := strconv.ParseInt(c.PostForm("usedTraffic"), 10, 64)
+	expireTime, _ := strconv.ParseInt(c.PostForm("expireTime"), 10, 64)
+
 	// 更新节点
 	sub.Config = config
 	sub.Name = name
+	sub.TotalTraffic = totalTraffic
+	sub.UsedTraffic = usedTraffic
+	sub.ExpireTime = expireTime
 	sub.CreateDate = time.Now().Format("2006-01-02 15:04:05")
 	sub.Nodes = []models.Node{}
 	for _, v := range strings.Split(nodes, ",") {

@@ -8,6 +8,9 @@ import (
 type Subcription struct {
 	ID            int
 	Name          string
+	TotalTraffic  int64  // 总流量 (Bytes)
+	UsedTraffic   int64  // 已用流量 (Bytes)
+	ExpireTime    int64  // 到期时间 (Unix Timestamp)
 	Config        string    `gorm:"embedded"`
 	Nodes         []Node    `gorm:"many2many:subcription_nodes;" json:"-"` // 多对多关系
 	SubLogs       []SubLogs `gorm:"foreignKey:SubcriptionID;"`             // 一对多关系 约束父表被删除子表记录跟着删除
